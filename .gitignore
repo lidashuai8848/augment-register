@@ -155,3 +155,5 @@ Thumbs.db
 # 敏感信息
 config.json
 secrets.json
+
+.vercel

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>插件测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="email"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input[type="email"]:focus, input[type="number"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .instructions {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Chrome 插件测试页面</h1>
+        
+        <div class="instructions">
+            <h3>📋 测试说明：</h3>
+            <ol>
+                <li>确保已安装 Chrome 插件</li>
+                <li>点击浏览器工具栏中的插件图标</li>
+                <li>在插件弹窗中点击"开始注册"</li>
+                <li>观察插件是否能自动填写表单</li>
+            </ol>
+        </div>
+
+        <form id="testForm">
+            <div class="form-group">
+                <label for="email">邮箱地址：</label>
+                <input type="email" id="email" name="email" placeholder="请输入邮箱地址" required>
+            </div>
+
+            <div class="form-group">
+                <label for="code">验证码：</label>
+                <input type="number" id="code" name="code" placeholder="请输入6位验证码" maxlength="6">
+            </div>
+
+            <button type="button" id="sendCode">发送验证码</button>
+            <button type="submit" id="submitForm">提交注册</button>
+        </form>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        // 模拟表单行为
+        document.getElementById('sendCode').addEventListener('click', function() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                showStatus('请先输入邮箱地址', 'error');
+                return;
+            }
+            
+            showStatus('验证码发送成功！请查看邮箱', 'success');
+            
+            // 显示验证码输入框
+            document.getElementById('code').style.display = 'block';
+        });
+
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const code = document.getElementById('code').value;
+            
+            if (!email || !code) {
+                showStatus('请填写完整信息', 'error');
+                return;
+            }
+            
+            showStatus('注册成功！', 'success');
+        });
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 3000);
+        }
+
+        // 页面加载完成后的提示
+        window.addEventListener('load', function() {
+            console.log('测试页面已加载，可以测试插件功能');
+        });
+    </script>
+</body>
+</html>
