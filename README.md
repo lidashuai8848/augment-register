@@ -1,9 +1,16 @@
-# Augment Code 注册工具
+# 🚀 Augment 自动注册项目
 
-> 支持两种邮箱方案，任选其一即可自动完成 AugmentCode 注册流程。
+一个完整的 Augment 官网自动注册解决方案，支持自动生成邮箱、获取验证码、完成注册
+流程。
 
-**一句话总结**：全部免费、复制放在油猴即用。AnonAddy 需要在官网注册账号和 key（
-免费） ，GuerrillaMail 直接复制即用，在学不会把我腿打断 😁
+## ✨ 功能特性
+
+- 🤖 **全自动注册**：一键完成整个注册流程
+- 📧 **智能邮箱生成**：支持 AnonAddy 别名邮箱和临时邮箱
+- 🔢 **自动验证码获取**：无需手动查看邮箱
+- 🔄 **智能重试机制**：最多 5 次重试，确保成功率
+- 🎯 **智能表单识别**：自动识别并填写注册表单
+- ⚡ **快速响应**：平均 8 秒内完成验证码获取
 
 ## ✅ 方案一：AnonAddy 无限别名邮箱（推荐）
 
@@ -19,14 +26,57 @@
 
 ---
 
-### 📦 仓库模板（直接可用）
+## 🚀 快速开始
+
+### 1. 部署到 Vercel（方案一）
 
 ```bash
+# 1. 克隆项目
+fork本项目到你自己的仓库，拉取到本地
+cd augment-register
+
+# 2. 安装依赖
+npm install
+
+# 3. 部署到 Vercel
+npx vercel --prod
+```
+
+**环境变量配置**：
+
+- `QQ_USER`: 你的 QQ 邮箱（如：123456@qq.com）
+- `QQ_PASS`: QQ 邮箱授权码（16 位）
+
+### 2. 安装油猴脚本
+
+1. 安装 [Tampermonkey](https://www.tampermonkey.net/) 浏览器扩展
+2. 复制 `anonaddy.js` 的内容到油猴脚本
+3. **重要**：修改脚本中的以下配置：
+   ```javascript
+   const API_URL = "https://your-project.vercel.app/api/code"; // 改为你的 Vercel 地址
+   const DOMAIN = "username.anonaddy.com"; // 改为你的 AnonAddy 域名
+   ```
+4. 保存并启用脚本
+
+### 3. 开始使用
+
+1. 访问 [Augment 注册页面](https://augmentcode.com)
+2. 点击页面右下角的"🚀 自动注册"按钮
+3. 等待脚本自动完成注册（约 30 秒）
+
+## 📁 项目结构
+
+```
 augment-register/
-├── api/code.js          # 云函数，读取环境变量
-├── package.json         # 仅依赖
-└── README.md            # 可选
----
+├── 📄 anonaddy.js          # 油猴脚本（AnonAddy方案）
+├── 📄 GuerrillaMail.js     # 油猴脚本（临时邮箱方案）
+├── 📁 api/
+│   └── 📄 code.js          # Vercel 云函数（验证码获取）
+├── 📄 package.json         # 项目依赖配置
+├── 📄 vercel.json          # Vercel 部署配置
+├── 📄 .gitignore           # Git 忽略文件
+└── 📄 README.md            # 项目说明文档
+```
 
 ## ✅ 方案二：GuerrillaMail 临时邮箱（免注册即用）
 
@@ -49,8 +99,7 @@ augment-register/
 | **3. API 参数**     | 无需登录，每次访问返回 `sid_token`；脚本自动提取 `PHPSESSID` Cookie；邮箱 60 分钟后失效                                           | —                                                                                                                        |
 | **4. 转发（可选）** | 免费版 **不支持** 自定义转发；如需可手动转发到个人邮箱                                                                            | —                                                                                                                        |
 
-> **使用期限**：邮箱保持 **60 分钟** 有效，超时后清空
-> **API 文
+> **使用期限**：邮箱保持 **60 分钟** 有效，超时后清空 **API 文
 > 档**：[https://www.guerrillamail.com/api](https://www.guerrillamail.com/api)
 
 #### GuerrillaMail 邮箱模块
@@ -125,8 +174,8 @@ MIT License
 
 ## 📜 免责声明（技术研究与合法使用）
 
-本脚本仅供 **安全研究、自动化测试与个人学习** 之用。
-使用即视为已阅读并同意以下条款：
+本脚本仅供 **安全研究、自动化测试与个人学习** 之用。使用即视为已阅读并同意以下条
+款：
 
 1. **禁止违法用途**：严禁用于批量注册、绕过限制、破坏服务条款或任何违法行为。
 2. **遵守目标网站政策**：使用前请阅读 AugmentCode / AnonAddy / GuerrillaMail 的
@@ -138,6 +187,9 @@ MIT License
 5. **责任自负**：因使用或滥用脚本导致的账号封禁、法律责任或其他纠纷，均由使用者
    自行承担。
 
-> 若不同意本声明，请勿下载、安装或运行本脚本。
-> **使用时即视为已阅读并同意以上全部条款。**
+> 若不同意本声明，请勿下载、安装或运行本脚本。 **使用时即视为已阅读并同意以上全
+> 部条款。**
+
+```
+
 ```

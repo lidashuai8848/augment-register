@@ -12,9 +12,8 @@
   "use strict";
 
   /* ======== 配置 ======== */
-  const API_URL =
-    "const API_URL = 'https://augment-register.vercel.app/api/code';"; // 云函数地址和项目名保持一致
-  const DOMAIN = "zk133.anonaddy.com";
+  const API_URL = "https://augment-register.vercel.app/api/code"; // 修改为你的 Vercel 部署地址
+  const DOMAIN = "zk133.anonaddy.com"; // 修改为你的 AnonAddy 域名
   /* ====================== */
 
   /* ---- 通用工具 ---- */
@@ -73,31 +72,14 @@
       headers: { "Content-Type": "application/json" },
       data: JSON.stringify({ user: QQ_USER, pass: QQ_PASS }),
       onload: async (resp) => {
-        try {
-          const { code } = JSON.parse(resp.responseText);
-          if (!code) {
-            alert("验证码未收到");
-            return;
-          }
-
-          /* 5️⃣ 填验证码 */
+        const { code } = await resp.json();
+        if (code) {
           codeInput.value = code;
           codeInput.dispatchEvent(new Event("input", { bubbles: true }));
-
-          /* 6️⃣ 勾选同意 */
-          const agreeBox = await wait($.agree);
-          if (!agreeBox.checked) agreeBox.click();
-
-          /* 7️⃣ 点击 Sign up / Continue */
-          const finalBtn = await wait(
-            () => $.btn("sign up") || $.btn("continue")
-          );
-          finalBtn.click();
-        } catch (e) {
-          alert("验证码解析失败");
+        } else {
+          alert("验证码获取失败，请手动查看邮箱");
         }
       },
-      onerror: () => alert("验证码接口异常"),
     });
   }
 
