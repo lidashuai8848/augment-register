@@ -2,6 +2,16 @@ import { ImapFlow } from "imapflow";
 
 export default async (req, res) => {
   if (req.method !== "POST") return res.status(405).end();
+
+  // 设置 CORS 头部，允许插件调用
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   // 从环境变量读取，Vercel 面板 → Settings → Environment Variables
   const { user, pass } = {
     user: process.env.QQ_USER,
@@ -73,5 +83,11 @@ export default async (req, res) => {
 
   lock.release();
   await client.logout();
-  res.json({ code }); // 找不到返回 null
+
+  // 返回结果，包含成功状态
+  if (code) {
+    res.json({ success: true, code, message: "验证码获取成功" });
+  } else {
+    res.json({ success: false, code: null, message: "未找到验证码" });
+  }
 };
