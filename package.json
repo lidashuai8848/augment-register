@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'No build step required'",
+    "build": "node api/code.js",
     "start": "node api/code.js"
   }
 }
