@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自动注册日志</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- 固定顶部区域 -->
+  <div class="header">
+    <div class="header-content">
+      <h1 class="title">自动注册日志</h1>
+      <div class="buttons">
+        <button id="startBtn" class="start-btn">开始注册</button>
+        <button id="clearBtn" class="clear-btn">清除</button>
+      </div>
+    </div>
+    
+    <!-- 公众号推广区域 -->
+    <div class="promotion">
+      <span class="promotion-icon">📱</span>
+      <span class="promotion-text">关注公众号「code 未来」获取更多技术资源</span>
+    </div>
+  </div>
+
+  <!-- 日志区域 -->
+  <div class="logs-container">
+    <div id="logs" class="logs">
+      <!-- 日志内容将通过 JavaScript 动态添加 -->
+    </div>
+  </div>
+
+  <!-- 状态指示器 -->
+  <div id="status" class="status hidden">
+    <div class="status-content">
+      <span class="status-icon">⏳</span>
+      <span class="status-text">正在处理...</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
