@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "api/code.js": {
-      "runtime": "@vercel/node@3.0.7"
-    }
-  },
   "buildCommand": "echo 'No build required'",
   "outputDirectory": "."
 }
