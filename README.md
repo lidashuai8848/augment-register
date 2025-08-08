@@ -14,7 +14,7 @@
 | 1️⃣ 注册 AnonAddy  | [anonaddy.com](https://anonaddy.com) → Sign Up                                                                    | 记住 **用户名** 和 **真实邮箱** |
 | 2️⃣ 设置转发       | Dashboard → Recipients → Add → 输入 QQ 邮箱                                                                       | 收到验证邮件后点链接            |
 | 3️⃣ 获取 QQ 授权码 | QQ 邮箱网页版 → 设置 → 账户 → **POP3/SMTP** → 开启 IMAP → 生成 16 位授权码                                        |                                 |
-| 4️⃣ 部署云函数     | fork 本项目 → [Vercel]() → 一键部署                                                                               |
+| 4️⃣ 部署云函数     | fork 本项目 → [Vercel](https://vercel.com/) → 一键部署                                                            |
 | 5️⃣ 配置环境变量   | Vercel 面板 → **Settings → Environment Variables** 添加两行：<br>`QQ_USER=xxx@qq.com`<br>`QQ_PASS=你的16位授权码` |
 
 ---
