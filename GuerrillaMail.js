@@ -90,6 +90,19 @@
                   <span style="color: #1a73e8;">📢</span>
                   <span>关注公众号「code 未来」获取更多技术资源</span>
               </div>
+              <div id="status-bar" style="
+                  padding: 8px 12px;
+                  background: #e8f0fe;
+                  border-bottom: 1px solid #dadce0;
+                  font-size: 11px;
+                  color: #1a73e8;
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+              ">
+                  <span id="status-icon">🔍</span>
+                  <span id="status-text">正在检测页面状态...</span>
+              </div>
               <div id="log-content" style="
                   padding: 12px;
                   overflow-y: auto;
@@ -158,6 +171,35 @@
         } else {
           debugLog("❌ 未找到注册按钮元素", "error");
           return null;
+        }
+      },
+      updateStatus: function (icon, text, type = "info") {
+        const statusIcon = document.getElementById("status-icon");
+        const statusText = document.getElementById("status-text");
+        const statusBar = document.getElementById("status-bar");
+
+        if (statusIcon && statusText && statusBar) {
+          statusIcon.textContent = icon;
+          statusText.textContent = text;
+
+          // 根据类型设置状态栏颜色
+          switch (type) {
+            case "success":
+              statusBar.style.background = "#e6f4ea";
+              statusBar.style.color = "#1e8e3e";
+              break;
+            case "error":
+              statusBar.style.background = "#fce8e6";
+              statusBar.style.color = "#d93025";
+              break;
+            case "warning":
+              statusBar.style.background = "#fef7e0";
+              statusBar.style.color = "#ea8600";
+              break;
+            default:
+              statusBar.style.background = "#e8f0fe";
+              statusBar.style.color = "#1a73e8";
+          }
         }
       },
     };
@@ -688,38 +730,68 @@
       debugLog(`📧 使用邮箱: ${email}`, "success");
 
       debugLog("🔍 查找邮箱输入框...", "info");
-      const emailInput = await waitForElement('input[name="username"]');
+      // 修复：使用正确的选择器
+      const emailInput =
+        (await waitForElement('input[name="email"]')) ||
+        (await waitForElement('input[id="email"]')) ||
+        (await waitForElement('input[type="email"]')) ||
+        (await waitForElement('input[name="username"]'));
+
       if (!emailInput) {
         debugLog("❌ 未找到邮箱输入框", "error");
+        userLog("❌ 未找到邮箱输入框，请检查页面", "error");
         return false;
       }
 
       userLog("📝 正在填写邮箱...", "info");
       debugLog("✅ 找到邮箱输入框，开始填写", "success");
-      debugLog("📝 填写邮箱地址...", "info");
+      debugLog(
+        `📝 邮箱输入框属性: name="${emailInput.name}", id="${emailInput.id}", type="${emailInput.type}"`,
+        "info"
+      );
 
-      // 填写邮箱
+      // 清空并填写邮箱
+      emailInput.value = "";
+      emailInput.focus();
       emailInput.value = email;
+
+      // 触发多种事件确保兼容性
       emailInput.dispatchEvent(new Event("input", { bubbles: true }));
+      emailInput.dispatchEvent(new Event("change", { bubbles: true }));
+      emailInput.dispatchEvent(new Event("blur", { bubbles: true }));
 
       userLog("✅ 邮箱填写完成", "success");
       debugLog(`✅ 邮箱填写完成: ${email}`, "success");
 
+      // 等待一下让页面响应
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       // 点击继续按钮
       debugLog("🔍 查找继续按钮...", "info");
-      const continueBtn = await waitForElement('button[type="submit"]');
+      const continueBtn =
+        (await waitForElement('button[type="submit"]')) ||
+        (await waitForElement('button[name="action"]')) ||
+        (await waitForElement('button:contains("Continue")'));
+
       if (!continueBtn) {
         debugLog("❌ 未找到继续按钮", "error");
+        userLog("❌ 未找到继续按钮，请手动点击", "error");
         return false;
       }
 
       userLog("🎯 提交邮箱，等待验证码...", "info");
       debugLog("✅ 找到继续按钮，准备点击", "success");
+      debugLog(
+        `📝 继续按钮属性: type="${continueBtn.type}", name="${continueBtn.name}", text="${continueBtn.textContent}"`,
+        "info"
+      );
+
       continueBtn.click();
       debugLog("🎯 已点击继续按钮", "success");
       return true;
     } catch (error) {
       debugLog("❌ 填写邮箱流程失败", "error", error);
+      userLog(`❌ 填写邮箱失败: ${error.message}`, "error");
       return false;
     }
   }
@@ -737,33 +809,67 @@
     }
 
     debugLog("🔍 查找验证码输入框...", "info");
-    const codeInput = await waitForElement('input[name="code"]');
+    // 修复：使用更灵活的选择器查找验证码输入框
+    const codeInput =
+      (await waitForElement('input[name="code"]')) ||
+      (await waitForElement('input[name="otp"]')) ||
+      (await waitForElement('input[name="verification_code"]')) ||
+      (await waitForElement('input[placeholder*="验证码"]')) ||
+      (await waitForElement('input[placeholder*="code"]')) ||
+      (await waitForElement('input[maxlength="6"]')) ||
+      (await waitForElement('input[type="text"][maxlength="6"]'));
+
     if (!codeInput) {
       debugLog("❌ 未找到验证码输入框", "error");
+      userLog("❌ 未找到验证码输入框，请检查页面", "error");
       return false;
     }
 
     userLog(`📝 填写验证码: ${code}`, "info");
     debugLog("✅ 找到验证码输入框，开始填写", "success");
-    debugLog(`📝 填写验证码: ${code}`, "info");
+    debugLog(
+      `📝 验证码输入框属性: name="${codeInput.name}", placeholder="${codeInput.placeholder}", maxlength="${codeInput.maxLength}"`,
+      "info"
+    );
 
-    // 填写验证码
+    // 清空并填写验证码
+    codeInput.value = "";
+    codeInput.focus();
     codeInput.value = code;
+
+    // 触发多种事件确保兼容性
     codeInput.dispatchEvent(new Event("input", { bubbles: true }));
+    codeInput.dispatchEvent(new Event("change", { bubbles: true }));
+    codeInput.dispatchEvent(new Event("blur", { bubbles: true }));
 
     userLog("✅ 验证码填写完成", "success");
     debugLog("✅ 验证码填写完成", "success");
 
+    // 等待一下让页面响应
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     // 点击继续按钮
     debugLog("🔍 查找继续按钮...", "info");
-    const continueBtn = await waitForElement('button[type="submit"]');
+    const continueBtn =
+      (await waitForElement('button[type="submit"]')) ||
+      (await waitForElement('button[name="action"]')) ||
+      (await waitForElement('button:contains("Continue")')) ||
+      (await waitForElement('button:contains("Verify")')) ||
+      (await waitForElement('button:contains("确认")'));
+
     if (!continueBtn) {
       debugLog("❌ 未找到继续按钮", "error");
+      userLog("❌ 未找到继续按钮，请手动点击", "error");
       return false;
     }
 
     userLog("🎯 提交验证码，完成注册...", "info");
     debugLog("✅ 找到继续按钮，准备点击", "success");
+    debugLog(
+      `📝 继续按钮属性: type="${continueBtn.type}", name="${continueBtn.name}", text="${continueBtn.textContent}"`,
+      "info"
+    );
+
     continueBtn.click();
     debugLog("🎯 已点击继续按钮", "success");
     return true;
@@ -828,40 +934,63 @@
     debugLog("⏳ 等待页面加载完成 (1秒)...", "info");
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // 检查当前页面状态 - 使用更灵活的选择器
+    // 检查当前页面状态 - 使用更准确的选择器
     debugLog("🔍 开始检测页面元素...", "info");
 
+    // 修复：使用正确的选择器检测邮箱输入框
     const emailInput =
-      document.querySelector('input[name="username"]') ||
+      document.querySelector('input[name="email"]') ||
+      document.querySelector('input[id="email"]') ||
       document.querySelector('input[type="email"]') ||
+      document.querySelector('input[name="username"]') ||
       document.querySelector('input[placeholder*="email"]') ||
-      document.querySelector('input[placeholder*="邮箱"]');
+      document.querySelector('input[placeholder*="邮箱"]') ||
+      document.querySelector('input[inputmode="email"]');
 
+    // 修复：使用更准确的选择器检测验证码输入框
     const codeInput =
       document.querySelector('input[name="code"]') ||
+      document.querySelector('input[name="otp"]') ||
+      document.querySelector('input[name="verification_code"]') ||
       document.querySelector('input[placeholder*="验证码"]') ||
       document.querySelector('input[placeholder*="code"]') ||
-      document.querySelector('input[maxlength="6"]');
+      document.querySelector('input[maxlength="6"]') ||
+      document.querySelector('input[type="text"][maxlength="6"]');
 
     const termsCheckbox =
       document.querySelector("#terms-of-service-checkbox") ||
       document.querySelector('input[type="checkbox"]') ||
       document.querySelector('[data-testid="terms-checkbox"]');
 
+    // 检测页面URL和标题
+    const isSignupPage =
+      window.location.href.includes("/signup") ||
+      window.location.href.includes("/register");
+    const isLoginPage = window.location.href.includes("/login");
+    const pageTitle = document.title;
+
     debugLog("📊 页面元素检测结果", "info", {
       emailInput: !!emailInput,
       codeInput: !!codeInput,
       termsCheckbox: !!termsCheckbox,
+      isSignupPage,
+      isLoginPage,
+      pageTitle,
+      currentUrl: window.location.href,
     });
 
     if (emailInput) {
       userLog("📧 请点击按钮开始自动注册", "info");
       debugLog("📧 检测到邮箱输入页面", "success");
+      logger.updateStatus("📧", "检测到邮箱输入页面，准备自动注册", "success");
+
       // 显示注册按钮
       const registerButton = logger.showRegisterButton();
       if (registerButton) {
         registerButton.addEventListener("click", async () => {
           debugLog("🎯 用户点击了注册按钮", "info");
+          logger.updateStatus("🚀", "开始自动注册流程...", "info");
+
           try {
             registerButton.disabled = true;
             registerButton.textContent = "正在填写邮箱...";
@@ -876,33 +1005,51 @@
               );
               registerButton.textContent = "邮箱填写完成";
               registerButton.style.background = "#34a853";
+              logger.updateStatus(
+                "✅",
+                "邮箱填写完成，等待页面跳转",
+                "success"
+              );
+            } else {
+              logger.updateStatus("❌", "邮箱填写失败，请检查页面", "error");
             }
           } catch (error) {
             debugLog("❌ 填写邮箱过程出错", "error", error);
             registerButton.disabled = false;
             registerButton.textContent = "重试自动注册";
             registerButton.style.background = "#d93025";
+            logger.updateStatus("❌", `注册失败: ${error.message}`, "error");
           }
         });
       }
     } else if (codeInput) {
       userLog("🔢 检测到验证码页面，自动填写中...", "success");
       debugLog("🔢 检测到验证码输入页面，自动执行验证码填写...", "success");
+      logger.updateStatus("🔢", "检测到验证码页面，开始自动填写", "success");
+
       try {
         if (await fillVerificationCode()) {
           userLog("✅ 验证码填写完成，正在完成注册...", "success");
           debugLog("✅ 验证码填写完成，正在完成注册...", "success");
+          logger.updateStatus("✅", "验证码填写完成，正在完成注册", "success");
+
           debugLog("⏳ 等待2秒后完成注册...", "info");
           await new Promise((resolve) => setTimeout(resolve, 2000));
 
           if (await completeRegistration()) {
             userLog("🎉 注册成功！", "success");
             debugLog("🎉 注册流程完成！", "success");
+            logger.updateStatus("🎉", "注册成功！", "success");
+          } else {
+            logger.updateStatus("❌", "完成注册失败，请手动操作", "error");
           }
+        } else {
+          logger.updateStatus("❌", "验证码填写失败，请检查邮箱", "error");
         }
       } catch (error) {
         userLog("❌ 验证码填写失败", "error");
         debugLog("❌ 填写验证码过程出错", "error", error);
+        logger.updateStatus("❌", `验证码填写失败: ${error.message}`, "error");
       }
     } else if (termsCheckbox) {
       userLog("📋 检测到服务条款页面，自动处理中...", "success");
